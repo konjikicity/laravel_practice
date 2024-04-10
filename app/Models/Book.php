@@ -17,6 +17,8 @@ class Book extends Model
         'price'
     ];
 
+    protected $table = 'books';
+
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);

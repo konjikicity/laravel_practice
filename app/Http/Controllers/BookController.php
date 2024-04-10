@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\BookPostRequest;
 use App\Models\Book;
 use App\Models\Category;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Http\Request;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 
 class BookController extends Controller
@@ -31,14 +32,14 @@ class BookController extends Controller
         return view('admin.book.create', compact('categories'));
     }
 
-    public function store(Request $request): Book
+    public function store(BookPostRequest $request): RedirectResponse
     {
-        $book =  Book::create([
+        Book::create([
             'category_id' => $request->category_id,
             'title' => $request->title,
             'price' => $request->price
         ]);
 
-        return $book;
+        return redirect(route('books.index'));
     }
 }
