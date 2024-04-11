@@ -5,17 +5,16 @@ namespace App\Http\Controllers;
 use App\Http\Requests\BookPostRequest;
 use App\Models\Book;
 use App\Models\Category;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 
 class BookController extends Controller
 {
-    public function index(): Collection
+    public function index(): View
     {
         $books = Book::all();
 
-        return $books;
+        return view('admin.book.index', compact('books'));
     }
 
     public function show(string $id): Book
@@ -34,12 +33,12 @@ class BookController extends Controller
 
     public function store(BookPostRequest $request): RedirectResponse
     {
-        Book::create([
+        $book = Book::create([
             'category_id' => $request->category_id,
             'title' => $request->title,
             'price' => $request->price
         ]);
 
-        return redirect(route('books.index'));
+        return redirect(route('books.index'))->with('message', $book->title . 'を追加しました。');
     }
 }
