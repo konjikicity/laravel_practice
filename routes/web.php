@@ -17,6 +17,7 @@ Route::prefix('admin/books')
     ->group(function () {
         Route::get('', 'index')->name('index');
         Route::get('{book}', 'show')->whereNumber('book')->name('show');
+        Route::get('{book}/edit', 'edit')->whereNumber('book')->name('edit');
         Route::get('create', 'create')->whereNumber('id')->name('create');
         Route::post('', 'store')->name('store');
     });

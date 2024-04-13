@@ -34,6 +34,16 @@ class BookController extends Controller
         return view('admin.book.create', compact('categories', 'authors'));
     }
 
+    public function edit(Book $book)
+    {
+        $categories = Category::all();
+        $authors = Author::all();
+
+        $authorIds = $book->authors()->pluck('id')->all();
+
+        return view('admin.book.edit', compact('book', 'categories', 'authors', 'authorIds'));
+    }
+
     public function store(BookPostRequest $request): RedirectResponse
     {
         DB::transaction(function () use ($request) {
