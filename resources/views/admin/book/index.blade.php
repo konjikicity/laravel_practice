@@ -8,7 +8,7 @@
             {{ session('message') }}
         </x-alert>
     @endif
-    <a href="{{ route('books.create') }}">
+    <a href="{{ route('book.create') }}">
         追加
     </a>
     <x-book-table :$books />
