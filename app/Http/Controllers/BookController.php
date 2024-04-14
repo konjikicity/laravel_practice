@@ -57,7 +57,7 @@ class BookController extends Controller
         }
     }
 
-    public function edit(Book $book)
+    public function edit(Book $book): View
     {
         $categories = Category::all();
         $authors = Author::all();
@@ -67,7 +67,7 @@ class BookController extends Controller
         return view('admin.book.edit', compact('book', 'categories', 'authors', 'authorIds'));
     }
 
-    public function update(BookPutRequest $request, Book $book)
+    public function update(BookPutRequest $request, Book $book): RedirectResponse
     {
         try {
             DB::transaction(function () use ($request, $book) {
@@ -80,7 +80,22 @@ class BookController extends Controller
                 $book->authors()->sync($request->author_ids);
             });
 
-            return redirect(route('book.index'))->with('message', $book->title . 'を変更しました。');
+            return redirect(route('book.index'))->with('message', $book->title . 'を更新しました。');
+        } catch (Exception $e) {
+            Log::error($e->getMessage());
+            return redirect(route('book.index'))->with('message', 'エラーが発生しました。再度試してください。');
+        }
+    }
+
+    public function destory(Book $book): RedirectResponse
+    {
+        try {
+            DB::transaction(function () use ($book) {
+                $book->authors()->detach();
+                $book->delete();
+            });
+
+            return redirect(route('book.index'))->with('message', $book->title . 'を削除しました。');
         } catch (Exception $e) {
             Log::error($e->getMessage());
             return redirect(route('book.index'))->with('message', 'エラーが発生しました。再度試してください。');

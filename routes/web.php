@@ -21,4 +21,5 @@ Route::prefix('admin/books')
         Route::get('{book}/edit', 'edit')->whereNumber('book')->name('edit');
         Route::put('{book}', 'update')->whereNumber('book')->name('update');
         Route::get('{book}', 'show')->whereNumber('book')->name('show');
+        Route::delete('{book}', 'destory')->whereNumber('book')->name('destory');
     });
