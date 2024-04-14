@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\BookPostRequest;
+use App\Http\Requests\BookPutRequest;
 use App\Models\Author;
 use App\Models\Book;
 use Exception;
@@ -36,16 +37,6 @@ class BookController extends Controller
         return view('admin.book.create', compact('categories', 'authors'));
     }
 
-    public function edit(Book $book)
-    {
-        $categories = Category::all();
-        $authors = Author::all();
-
-        $authorIds = $book->authors()->pluck('id')->all();
-
-        return view('admin.book.edit', compact('book', 'categories', 'authors', 'authorIds'));
-    }
-
     public function store(BookPostRequest $request): RedirectResponse
     {
         try {
@@ -59,10 +50,40 @@ class BookController extends Controller
                 $book->authors()->attach($request->author_ids);
             });
 
-            return redirect(route('books.index'))->with('message', $request->title . 'を追加しました。');
+            return redirect(route('book.index'))->with('message', $request->title . 'を追加しました。');
         } catch (Exception $e) {
             Log::error($e->getMessage());
-            return redirect(route('books.index'))->with('message', 'エラーが発生しました。再度試してください。');
+            return redirect(route('book.index'))->with('message', 'エラーが発生しました。再度試してください。');
+        }
+    }
+
+    public function edit(Book $book)
+    {
+        $categories = Category::all();
+        $authors = Author::all();
+
+        $authorIds = $book->authors()->pluck('id')->all();
+
+        return view('admin.book.edit', compact('book', 'categories', 'authors', 'authorIds'));
+    }
+
+    public function update(BookPutRequest $request, Book $book)
+    {
+        try {
+            DB::transaction(function () use ($request, $book) {
+                $book->update([
+                    'category_id' => $request->category_id,
+                    'title' => $request->title,
+                    'price' => $request->price
+                ]);
+
+                $book->authors()->sync($request->author_ids);
+            });
+
+            return redirect(route('book.index'))->with('message', $book->title . 'を変更しました。');
+        } catch (Exception $e) {
+            Log::error($e->getMessage());
+            return redirect(route('book.index'))->with('message', 'エラーが発生しました。再度試してください。');
         }
     }
 }

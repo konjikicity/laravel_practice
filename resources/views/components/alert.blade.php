@@ -1,4 +1,4 @@
-<div id="alert" {{ $attribute }}>
+<div id="alert" {{ $attributes->get('class') }}>
     {{ $slot }}
 </div>
 <style>
